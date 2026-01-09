@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADE - Student Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            background: #fbbf24;
+            color: white;
+        }
+
+        .sidebar-header h2 {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 15px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #f9f9f9;
+            color: #333;
+        }
+
+        .menu-item.active {
+            background: #fbbf24;
+            color: white;
+            border-left-color: #f59e0b;
+        }
+
+        .menu-item .icon {
+            margin-right: 10px;
+        }
+
+        /* Main Content Styles */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .upload-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .btn-template {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-template:hover {
+            background: #4b5563;
+        }
+
+        .btn-upload {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .btn-upload:hover {
+            background: #f59e0b;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #fbbf24;
+            background: #fffbeb;
+        }
+
+        /* Individual Registration */
+        .individual-registration {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+
+        .form-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background: #fbbf24;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .filter-tab.active {
+            background: #fbbf24;
+            color: white;
+            border-color: #fbbf24;
+        }
+
+        /* Table Styles */
+        .users-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f9fafb;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .pagination-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .pagination-btn.active {
+            background: #fbbf24;
+            color: white;
+            border-color: #fbbf24;
+        }
+
+        #fileInput {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>SADE System</h2>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active">
+                    <span class="icon">📅</span>
+                    Schedules
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🔔</span>
+                    Notification
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title">Student Registration</h1>
+            </div>
+
+            <div id="messageContainer"></div>
+
+            <!-- CSV Upload Section -->
+            <div class="upload-section">
+                <div class="upload-buttons">
+                    <a href="#" class="btn btn-template" onclick="downloadTemplate()">📥 Download CSV Template</a>
+                    <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">📤 Upload File</button>
+                </div>
+                
+                <div class="file-upload-area" id="fileUploadArea">
+                    <p>Drag and drop your CSV file here, or click "Upload File" to browse</p>
+                    <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(this)">
+                </div>
+            </div>
+
+            <!-- Individual Student Registration -->
+            <div class="individual-registration">
+                <h2 class="section-title">Individual Student Registration</h2>
+                <form id="studentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">ID Number</label>
+                            <input type="text" id="studentId" class="form-input" placeholder="2020-123456" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-input" placeholder="name@example.com" required>
+                            <small class="form-note">Please enter a valid email address</small>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-upload">➕ Add Student</button>
+                </form>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search ID or name">
+                    <button class="search-btn" onclick="searchStudents()">All</button>
+                </div>
+                
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all" onclick="filterStudents('all')">All</button>
+                    <button class="filter-tab" data-filter="students" onclick="filterStudents('students')">Students</button>
+                    <button class="filter-tab" data-filter="faculty" onclick="filterStudents('faculty')">Faculty</button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="users-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID Number</th>
+                            <th>Full Name</th>
+                            <th>User Type</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <!-- Sample data -->
+                        <tr>
+                            <td>2020-098838</td>
+                            <td>John Doe</td>
+                            <td>Student</td>
+                            <td>john.doe@example.com</td>
+                            <td><span class="status-badge status-active">ACTIVE</span></td>
+                            <td><button class="btn-delete" onclick="deleteStudent('2020-098838')">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td>2022-349834</td>
+                            <td>Prof. Alice</td>
+                            <td>Faculty</td>
+                            <td>alice.p@example.com</td>
+                            <td><span class="status-badge status-active">ACTIVE</span></td>
+                            <td><button class="btn-delete" onclick="deleteStudent('2022-349834')">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td>2018-034856</td>
+                            <td>Jane Smith</td>
+                            <td>Student</td>
+                            <td>jane.s@example.com</td>
+                            <td><span class="status-badge status-active">ACTIVE</span></td>
+                            <td><button class="btn-delete" onclick="deleteStudent('2018-034856')">Delete</button></td>
+                        </tr>
+                        <tr>
+                            <td>2020-123458</td>
+                            <td>Jane Doe</td>
+                            <td>Student</td>
+                            <td>jane.doe@example.com</td>
+                            <td><span class="status-badge status-inactive">INACTIVE</span></td>
+                            <td><button class="btn-delete" onclick="deleteStudent('2020-123458')">Delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Showing 1-4 of 4 entries
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn">Previous</button>
+                        <button class="pagination-btn active">1</button>
+                        <button class="pagination-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (!currentUser) {
+            window.location.href = 'index.html';
+        }
+
+        // Sample student data
+        let students = [
+            { id: '2020-098838', name: 'John Doe', type: 'Student', email: 'john.doe@example.com', status: 'ACTIVE' },
+            { id: '2022-349834', name: 'Prof. Alice', type: 'Faculty', email: 'alice.p@example.com', status: 'ACTIVE' },
+            { id: '2018-034856', name: 'Jane Smith', type: 'Student', email: 'jane.s@example.com', status: 'ACTIVE' },
+            { id: '2020-123458', name: 'Jane Doe', type: 'Student', email: 'jane.doe@example.com', status: 'INACTIVE' }
+        ];
+
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderStudents();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Student form submission
+            document.getElementById('studentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addStudent();
+            });
+
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', function() {
+                currentSearch = this.value;
+                renderStudents();
+            });
+
+            // File upload drag and drop
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', function() {
+                this.classList.remove('dragover');
+            });
+            
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload({ files: files });
+                }
+            });
+        }
+
+        function addStudent() {
+            const studentId = document.getElementById('studentId').value;
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+
+            // Check if student already exists
+            if (students.find(s => s.id === studentId || s.email === email)) {
+                showMessage('Student with this ID or email already exists!', 'error');
+                return;
+            }
+
+            // Add new student
+            students.push({
+                id: studentId,
+                name: fullName,
+                type: 'Student',
+                email: email,
+                status: 'ACTIVE'
+            });
+
+            // Clear form
+            document.getElementById('studentForm').reset();
+            
+            // Show success message
+            showMessage('Student added successfully!', 'success');
+            
+            // Re-render table
+            renderStudents();
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                students = students.filter(s => s.id !== studentId);
+                showMessage('Student deleted successfully!', 'success');
+                renderStudents();
+            }
+        }
+
+        function filterStudents(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            
+            renderStudents();
+        }
+
+        function searchStudents() {
+            currentSearch = document.getElementById('searchInput').value;
+            renderStudents();
+        }
+
+        function renderStudents() {
+            let filteredStudents = students;
+
+            // Apply search filter
+            if (currentSearch) {
+                filteredStudents = filteredStudents.filter(student => 
+                    student.id.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    student.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                    student.email.toLowerCase().includes(currentSearch.toLowerCase())
+                );
+            }
+
+            // Apply type filter
+            if (currentFilter !== 'all') {
+                const filterType = currentFilter === 'students' ? 'Student' : 'Faculty';
+                filteredStudents = filteredStudents.filter(student => student.type === filterType);
+            }
+
+            // Render table
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            filteredStudents.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.type}</td>
+                    <td>${student.email}</td>
+                    <td><span class="status-badge ${student.status === 'ACTIVE' ? 'status-active' : 'status-inactive'}">${student.status}</span></td>
+                    <td><button class="btn-delete" onclick="deleteStudent('${student.id}')">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update pagination info
+            document.querySelector('.pagination-info').textContent = 
+                `Showing 1-${filteredStudents.length} of ${filteredStudents.length} entries`;
+        }
+
+        function downloadTemplate() {
+            const csvContent = "student_id,first_name,last_name,email,course,year_level\n" +
+                              "2020-123456,John,Doe,john.doe@ust.edu.ph,BSIT,3\n" +
+                              "2020-123457,Jane,Smith,jane.smith@ust.edu.ph,BSCS,2\n" +
+                              "2020-123458,Bob,Johnson,bob.johnson@ust.edu.ph,BSIT,4";
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'student_template.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function handleFileUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+                showMessage('Please select a valid CSV file', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                const lines = csv.split('\n');
+                const headers = lines[0].split(',');
+                
+                let successCount = 0;
+                let errorCount = 0;
+
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim() === '') continue;
+                    
+                    const values = lines[i].split(',');
+                    const studentData = {};
+                    
+                    headers.forEach((header, index) => {
+                        studentData[header.trim()] = values[index] ? values[index].trim() : '';
+                    });
+
+                    if (studentData.student_id && studentData.first_name && studentData.email) {
+                        // Check if student already exists
+                        if (!students.find(s => s.id === studentData.student_id || s.email === studentData.email)) {
+                            students.push({
+                                id: studentData.student_id,
+                                name: `${studentData.first_name} ${studentData.last_name || ''}`.trim(),
+                                type: 'Student',
+                                email: studentData.email,
+                                status: 'ACTIVE'
+                            });
+                            successCount++;
+                        } else {
+                            errorCount++;
+                        }
+                    } else {
+                        errorCount++;
+                    }
+                }
+
+                showMessage(`CSV uploaded: ${successCount} students added, ${errorCount} errors`, 'success');
+                renderStudents();
+            };
+
+            reader.readAsText(file);
+        }
+
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `<div class="message ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

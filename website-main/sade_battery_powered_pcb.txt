@@ -1,0 +1,48 @@
+SADE Door Lock System - Battery Powered PCB Design
+=================================================
+
+BATTERY PACK SPECIFICATIONS:
+- Configuration: 8x 18650 Li-ion cells (2S4P or 4S2P)
+- Voltage Options:
+  * 2S4P: 7.4V nominal (6.0V-8.4V range), 10,400mAh capacity
+  * 4S2P: 14.8V nominal (12.0V-16.8V range), 5,200mAh capacity
+- Recommended: 4S2P for better voltage regulation
+
+PCB POWER MANAGEMENT SECTION (Updated):
+┌─────────────────────────────────────────────────────────────┐
+│  SADE Battery-Powered Door Controller PCB v1.1             │
+│                                                             │
+│  [Battery Management]    [Power Regulation]   [Monitoring] │
+│  ┌─────────────────────┐ ┌─────────────────┐ ┌─────────────┐ │
+│  │ Battery Connector   │ │ Buck Converter  │ │ Fuel Gauge  │ │
+│  │ XT60 or JST-XH     │ │ 14.8V→12V→5V   │ │ Battery %   │ │
+│  │ Fuse Protection    │ │ Efficiency >90% │ │ Voltage Mon │ │
+│  │ Reverse Polarity   │ │ 3A Output Max   │ │ Current Mon │ │
+│  └─────────────────────┘ └─────────────────┘ └─────────────┘ │
+│                                                             │
+│  [Charging Circuit]      [Power Switch]     [Low Bat Alert]│
+│  ┌─────────────────────┐ ┌─────────────────┐ ┌─────────────┐ │
+│  │ TP4056 Charger     │ │ Power On/Off    │ │ Low Voltage │ │
+│  │ USB-C Charging     │ │ LED Indicator   │ │ Cutoff      │ │
+│  │ Balance Charging   │ │ Soft Start      │ │ Sleep Mode  │ │
+│  │ Charge Status LEDs │ │ Overcurrent     │ │ Wake Timer  │ │
+│  └─────────────────────┘ └─────────────────┘ └─────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+
+POWER CONSUMPTION ANALYSIS:
+Component                    Current Draw    Power (5V)
+─────────────────────────────────────────────────────────
+Arduino Uno (Active)        45mA           225mW
+Arduino Uno (Sleep)         15mA           75mW
+USB Hub Module              100mA          500mW
+ESP32-CAM (Active)          160mA          800mW
+ESP32-CAM (Sleep)           10mA           50mW
+Status LEDs (2x)            20mA           100mW
+Keypad Scanning             5mA            25mW
+Solenoid (5sec/unlock)      2000mA         10W (brief)
+Buzzer (when active)        30mA           150mW
+Reed Switch + Exit Button   1mA            5mW
+─────────────────────────────────────────────────────────
+Normal Operation:           ~350mA         ~1.75W
+Sleep Mode:                 ~50mA          ~250mW
+Peak (Solenoid Active):     ~2350mA        ~11.75W

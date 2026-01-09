@@ -1,0 +1,57 @@
+SADE PCB - Bill of Materials (BOM)
+=================================
+
+MICROCONTROLLER SECTION:
+- Arduino Uno R3 Socket Headers (1x)
+- 28-pin DIP Socket for ATmega328P (1x)
+- 16MHz Crystal Oscillator (1x)
+- 22pF Ceramic Capacitors (2x)
+
+USB HUB SECTION:
+- USB Hub Module Mounting Holes (4x M3)
+- USB-A Connectors (4x) - for barcode scanner
+- USB Mini/Micro Connector (1x) - hub input
+- USB Cable Routing Channels
+
+POWER MANAGEMENT:
+- LM2596 Buck Converter Module (12V→5V, 3A)
+- Fuse Holder + 2A Fuse (1x)
+- Power Jack 2.1mm (1x)
+- Electrolytic Capacitors: 1000μF/16V (2x)
+- Ceramic Capacitors: 100nF (10x)
+- Power LED + 1kΩ Resistor (1x)
+
+SOLENOID DRIVER:
+- IRFZ44N N-Channel MOSFET (1x)
+- 1N4007 Flyback Diode (1x)
+- 10kΩ Gate Resistor (1x)
+- 2-Pin Screw Terminal (1x)
+
+KEYPAD INTERFACE:
+- 8-Pin JST Connector (1x)
+- 10kΩ Pull-up Resistors (8x)
+- 100nF Debounce Capacitors (8x)
+
+STATUS INDICATORS:
+- 5mm Green LED (1x)
+- 5mm Red LED (1x)
+- 330Ω Current Limiting Resistors (2x)
+- Piezo Buzzer 5V (1x)
+
+SECURITY SENSORS:
+- 3-Pin JST Connector - Reed Switch (1x)
+- 2-Pin JST Connector - Exit Button (1x)
+- 10kΩ Pull-up Resistors (2x)
+
+ESP32 COMMUNICATION:
+- 4-Pin JST Connector (1x)
+- 3.3V↔5V Level Shifters (2x)
+- 4.7kΩ Pull-up Resistors (2x)
+
+PCB SPECIFICATIONS:
+- 4-Layer PCB (Signal, Ground, Power, Signal)
+- HASL Surface Finish
+- Green Solder Mask
+- White Silkscreen
+- Via Size: 0.2mm drill, 0.4mm pad
+- Trace Width: 0.2mm (signal), 0.5mm (power)

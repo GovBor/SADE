@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADE - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="logo">SADE</h1>
+            
+            <form id="loginForm" action="login_sql.php" method="POST">
+                <!-- User Type Toggle -->
+                <div class="user-type-toggle">
+                    <button type="button" class="toggle-btn active" data-type="technician">Technician</button>
+                    <button type="button" class="toggle-btn" data-type="faculty">Faculty</button>
+                </div>
+                
+                <!-- Hidden input to store selected user type -->
+                <input type="hidden" name="user_type" id="userType" value="technician">
+                
+                <!-- PIN Input -->
+                <div class="input-group">
+                    <label for="pin">Input Pin</label>
+                    <input type="password" id="pin" name="pin" placeholder="Enter PIN" required maxlength="8">
+                </div>
+                
+                <!-- Sign In Button -->
+                <button type="submit" class="signin-btn">Sign In</button>
+                
+                <!-- Error Message -->
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                
+                <!-- Test Credentials -->
+                <div style="margin-top: 20px; font-size: 12px; color: #666; text-align: left;">
+                    <strong>Test Credentials:</strong><br>
+                    Technician: 123456 (Tech. Victorio)<br>
+                    Technician: 789012 (Admin User)<br>
+                    Faculty: 456789 (Prof. Cruz)<br>
+                    Faculty: 234567 (Prof. Smith)
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

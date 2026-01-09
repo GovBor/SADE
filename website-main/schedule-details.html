@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADE - Schedule Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 200px;
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            gap: 12px;
+        }
+
+        .menu-item:hover {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .menu-item.active {
+            background: #e5e7eb;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            background: #666;
+            border-radius: 2px;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            background: white;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Course Details Section */
+        .course-details {
+            padding: 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .detail-group h3 {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .detail-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .capacity-full {
+            color: #ef4444;
+        }
+
+        /* Participants Section */
+        .participants-section {
+            margin-top: 40px;
+        }
+
+        .participants-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .participants-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-add-student {
+            background: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+
+        .btn-add-student:hover {
+            background: #4338ca;
+        }
+
+        /* Participants Table */
+        .participants-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .table td {
+            color: #6b7280;
+        }
+
+        .table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-present {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-absent {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-checkbox:checked {
+            background: #4f46e5;
+            border-color: #4f46e5;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-view-logs {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-view-logs:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-remove-participants {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .btn-remove-participants:hover {
+            background: #bfdbfe;
+        }
+
+        .btn-remove-schedule {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-remove-schedule:hover {
+            background: #fecaca;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .participants-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">SADE System</div>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Dashboard
+                </a>
+                <a href="schedule-management-main.html" class="menu-item active">
+                    <div class="menu-icon"></div>
+                    Schedules
+                </a>
+                <a href="users-management.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Users
+                </a>
+                <a href="logs.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Logs
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Settings
+                </a>
+                <a href="help.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Help
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">Schedule Details</h1>
+                <div class="user-profile">
+                    <img src="/placeholder.svg?height=32&width=32&text=Prof" alt="Prof. Cruz" class="user-avatar">
+                    <span class="user-name">Prof. Cruz</span>
+                    <span>▼</span>
+                </div>
+            </div>
+
+            <div class="course-details">
+                <!-- Course Information -->
+                <div class="details-grid">
+                    <div class="detail-group">
+                        <h3>Course Name</h3>
+                        <div class="detail-value">CYBERSEC</div>
+                    </div>
+                    <div class="detail-group">
+                        <h3>Professor</h3>
+                        <div class="detail-value">Prof. Green</div>
+                    </div>
+                    <div class="detail-group">
+                        <h3>Room</h3>
+                        <div class="detail-value">1811</div>
+                    </div>
+                    <div class="detail-group">
+                        <h3>Capacity</h3>
+                        <div class="detail-value capacity-full">32/32 (Full)</div>
+                    </div>
+                    <div class="detail-group">
+                        <h3>Schedule</h3>
+                        <div class="detail-value">Mon, Wed, Fri | 10:00 AM - 11:00 AM</div>
+                    </div>
+                </div>
+
+                <!-- Participants Section -->
+                <div class="participants-section">
+                    <div class="participants-header">
+                        <h2 class="participants-title">Participants (32)</h2>
+                        <button class="btn-add-student" onclick="addStudents()">
+                            👥 Add Student/s
+                        </button>
+                    </div>
+
+                    <!-- Participants Table -->
+                    <div class="participants-table">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>User ID</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participantsTableBody">
+                                <tr>
+                                    <td>Alice Johnson</td>
+                                    <td>U10001</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10001"></td>
+                                </tr>
+                                <tr>
+                                    <td>Bob Williams</td>
+                                    <td>U10002</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10002"></td>
+                                </tr>
+                                <tr>
+                                    <td>Charlie Brown</td>
+                                    <td>U10003</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-absent">ABSENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10003"></td>
+                                </tr>
+                                <tr>
+                                    <td>Diana Prince</td>
+                                    <td>U10004</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10004"></td>
+                                </tr>
+                                <tr>
+                                    <td>Eve Adams</td>
+                                    <td>U10005</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10005"></td>
+                                </tr>
+                                <tr>
+                                    <td>Frank White</td>
+                                    <td>U10006</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-absent">ABSENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10006"></td>
+                                </tr>
+                                <tr>
+                                    <td>Grace Lee</td>
+                                    <td>U10007</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10007"></td>
+                                </tr>
+                                <tr>
+                                    <td>Henry King</td>
+                                    <td>U10008</td>
+                                    <td>Student</td>
+                                    <td><span class="status-badge status-present">PRESENT</span></td>
+                                    <td><input type="checkbox" class="action-checkbox" data-user="U10008"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-view-logs" onclick="viewLogs()">
+                            📋 View Logs for Schedule
+                        </button>
+                        <button class="btn btn-remove-participants" onclick="removeParticipants()">
+                            👥 Remove Participants
+                        </button>
+                        <button class="btn btn-remove-schedule" onclick="removeSchedule()">
+                            🗑️ Remove Schedule
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle checkbox selection
+        document.querySelectorAll('.action-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const userName = this.closest('tr').cells[0].textContent;
+                const userId = this.dataset.user;
+                console.log(`Student ${this.checked ? 'selected' : 'deselected'}:`, userName, userId);
+                
+                // Update UI to show selection
+                if (this.checked) {
+                    this.closest('tr').style.backgroundColor = '#f0f9ff';
+                } else {
+                    this.closest('tr').style.backgroundColor = '';
+                }
+            });
+        });
+
+        function addStudents() {
+            alert('Add Student functionality would open a modal here to select students from the user database');
+        }
+
+        function viewLogs() {
+            alert('Redirecting to logs for this schedule...');
+            // In a real application, this would redirect to logs.html with schedule filter
+            window.location.href = 'logs.html?schedule=CYBERSEC';
+        }
+
+        function removeParticipants() {
+            const selectedCheckboxes = document.querySelectorAll('.action-checkbox:checked');
+            
+            if (selectedCheckboxes.length === 0) {
+                alert('Please select participants to remove');
+                return;
+            }
+            
+            const selectedNames = Array.from(selectedCheckboxes).map(checkbox => {
+                return checkbox.closest('tr').cells[0].textContent;
+            });
+            
+            if (confirm(`Remove ${selectedCheckboxes.length} selected participants?\n\nSelected: ${selectedNames.join(', ')}`)) {
+                selectedCheckboxes.forEach(checkbox => {
+                    checkbox.closest('tr').remove();
+                });
+                
+                // Update participant count
+                const remainingCount = document.querySelectorAll('#participantsTableBody tr').length;
+                document.querySelector('.participants-title').textContent = `Participants (${remainingCount})`;
+                
+                // Update capacity display
+                document.querySelector('.capacity-full').textContent = `${remainingCount}/32 ${remainingCount === 32 ? '(Full)' : ''}`;
+                document.querySelector('.capacity-full').className = remainingCount === 32 ? 'detail-value capacity-full' : 'detail-value';
+                
+                alert('Selected participants removed successfully');
+            }
+        }
+
+        function removeSchedule() {
+            if (confirm('Are you sure you want to remove this entire schedule?\n\nThis action will:\n- Remove all participants\n- Delete the schedule permanently\n- Cannot be undone\n\nContinue?')) {
+                alert('Schedule "CYBERSEC" removed successfully');
+                window.location.href = 'schedule-management-main.html';
+            }
+        }
+
+        // Select all functionality (Ctrl+A)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'a' && e.target.closest('.participants-table')) {
+                e.preventDefault();
+                const checkboxes = document.querySelectorAll('.action-checkbox');
+                const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = !allChecked;
+                    checkbox.dispatchEvent(new Event('change'));
+                });
+            }
+        });
+
+        // Update participant count on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const participantCount = document.querySelectorAll('#participantsTableBody tr').length;
+            document.querySelector('.participants-title').textContent = `Participants (${participantCount})`;
+        });
+    </script>
+</body>
+</html>

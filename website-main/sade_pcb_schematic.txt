@@ -1,0 +1,38 @@
+SADE Door Lock System - PCB Design Specifications
+===============================================
+
+PCB Dimensions: 100mm x 80mm (4-layer PCB recommended)
+Board Thickness: 1.6mm
+Copper Weight: 1oz (35μm)
+
+COMPONENT PLACEMENT ZONES:
+┌─────────────────────────────────────────────────────────────┐
+│  SADE Door Controller PCB v1.0                             │
+│                                                             │
+│  [USB Hub]     [Arduino Headers]      [Power Section]      │
+│  ┌─────────┐   ┌──────────────────┐   ┌─────────────────┐   │
+│  │ 4-Port  │   │    Arduino Uno   │   │  12V→5V Reg     │   │
+│  │ USB Hub │   │    Socket/Headers│   │  Fuse & Filter  │   │
+│  │ Module  │   │                  │   │  Power LED      │   │
+│  └─────────┘   └──────────────────┘   └─────────────────┘   │
+│                                                             │
+│  [Keypad Connector]  [Solenoid Driver]  [Status LEDs]      │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌──────────────┐   │
+│  │ 4x4 Matrix      │ │ MOSFET Driver   │ │ Green/Red    │   │
+│  │ 8-Pin Connector │ │ Flyback Diode   │ │ Status LEDs  │   │
+│  │ Pull-up Resistors│ │ Screw Terminal  │ │ Buzzer       │   │
+│  └─────────────────┘ └─────────────────┘ └──────────────┘   │
+│                                                             │
+│  [ESP32 Interface]   [Security Sensors]  [Exit Button]     │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌──────────────┐   │
+│  │ Serial Comm     │ │ Reed Switch     │ │ Push Button  │   │
+│  │ Level Shifters  │ │ Tamper Detect   │ │ Pull-up Res  │   │
+│  │ 4-Pin Connector │ │ 3-Pin Connector │ │ 2-Pin Conn   │   │
+│  └─────────────────┘ └─────────────────┘ └──────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+
+POWER DISTRIBUTION:
+- 12V Input: Solenoid, Power Regulator
+- 5V Rail: Arduino, USB Hub, ESP32 Interface
+- 3.3V Rail: Logic Level Conversion
+- Ground Planes: Digital GND, Analog GND, Power GND

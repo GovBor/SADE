@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADE - Schedules</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 200px;
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px 15px;
+            border-bottom: 1px solid #eee;
+            background: #f8f9fa;
+        }
+
+        .sidebar-header h2 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .menu-item.active {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-right: 3px solid #1976d2;
+        }
+
+        .menu-item .icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .lab-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .lab-selector select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .manage-btn {
+            background: #1976d2;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .manage-btn:hover {
+            background: #1565c0;
+        }
+
+        .manage-btn .icon {
+            font-size: 16px;
+        }
+
+        /* Schedule Container */
+        .schedule-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .schedule-header {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Schedule Grid */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(6, 1fr);
+            gap: 1px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .time-slot, .day-header {
+            background: #f9fafb;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 500;
+            color: #374151;
+            font-size: 12px;
+        }
+
+        .day-header {
+            background: #e5e7eb;
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 13px;
+        }
+
+        .schedule-cell {
+            background: white;
+            min-height: 40px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .schedule-block {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border-radius: 4px;
+            padding: 8px 6px;
+            color: white;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .schedule-block:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Course Color Coding */
+        .schedule-block.capstone { background: #3b82f6; }
+        .schedule-block.cybersec { background: #ef4444; }
+        .schedule-block.sci { background: #ec4899; }
+        .schedule-block.quantitative { background: #ec4899; }
+        .schedule-block.algorithms { background: #f59e0b; }
+
+        .course-code {
+            font-weight: bold;
+            margin-bottom: 2px;
+            font-size: 9px;
+        }
+
+        .course-time {
+            font-size: 8px;
+            opacity: 0.9;
+        }
+
+        .system-status {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        /* Schedule Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1565c0;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .sidebar-menu {
+                display: flex;
+                overflow-x: auto;
+                padding: 0;
+            }
+            
+            .menu-item {
+                white-space: nowrap;
+                min-width: 120px;
+                justify-content: center;
+            }
+            
+            .schedule-grid {
+                font-size: 10px;
+            }
+            
+            .schedule-block {
+                font-size: 8px;
+                padding: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>SADE System</h2>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active">
+                    <span class="icon">📅</span>
+                    Schedules
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">📋</span>
+                    Logs
+                </a>
+                <a href="#" class="menu-item">
+                    <span class="icon">🔔</span>
+                    Notification
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title">Lab Schedules</h1>
+                <div class="header-controls">
+                    <div class="lab-selector">
+                        <label>Select Room:</label>
+                        <select id="labSelect" onchange="changeLabView()">
+                            <option value="1811">Lab 1811</option>
+                            <option value="1812">Lab 1812</option>
+                            <option value="1815">Lab 1815</option>
+                        </select>
+                    </div>
+                    <button class="manage-btn" onclick="openScheduleManagement()">
+                        <span class="icon">⚙️</span>
+                        Manage
+                    </button>
+                </div>
+            </div>
+
+            <div class="schedule-container">
+                <div class="schedule-header">
+                    Viewing: <span id="currentLab">Lab 1811</span> Schedule
+                </div>
+
+                <div class="schedule-grid">
+                    <!-- Header Row -->
+                    <div class="time-slot"></div>
+                    <div class="day-header">Monday</div>
+                    <div class="day-header">Tuesday</div>
+                    <div class="day-header">Wednesday</div>
+                    <div class="day-header">Thursday</div>
+                    <div class="day-header">Friday</div>
+                    <div class="day-header">Saturday</div>
+
+                    <!-- 7:00 AM -->
+                    <div class="time-slot">7:00 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 7:30 AM -->
+                    <div class="time-slot">7:30 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 8:00 AM -->
+                    <div class="time-slot">8:00 AM</div>
+                    <div class="schedule-cell">
+                        <div class="schedule-block capstone" onclick="openScheduleDetails('capstone-mon-8')">
+                            <div class="course-code">[CAPSTONE] Prof Cruz</div>
+                            <div class="course-time">(30/30)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell">
+                        <div class="schedule-block cybersec" onclick="openScheduleDetails('cybersec-wed-8')">
+                            <div class="course-code">[CYBERSEC] Prof Green</div>
+                            <div class="course-time">(27/27)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell">
+                        <div class="schedule-block sci" onclick="openScheduleDetails('sci-sat-8')">
+                            <div class="course-code">[SCI] Prof White</div>
+                            <div class="course-time">(27/27)</div>
+                        </div>
+                    </div>
+
+                    <!-- 8:30 AM -->
+                    <div class="time-slot">8:30 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 9:00 AM -->
+                    <div class="time-slot">9:00 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 9:30 AM -->
+                    <div class="time-slot">9:30 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 10:00 AM -->
+                    <div class="time-slot">10:00 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell">
+                        <div class="schedule-block quantitative" onclick="openScheduleDetails('quantitative-thu-10')">
+                            <div class="course-code">[QUANTITATIVE MODELS] Prof</div>
+                            <div class="course-time">(32/32)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 10:30 AM -->
+                    <div class="time-slot">10:30 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 11:00 AM -->
+                    <div class="time-slot">11:00 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 11:30 AM -->
+                    <div class="time-slot">11:30 AM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell">
+                        <div class="schedule-block algorithms" onclick="openScheduleDetails('algorithms-wed-1130')">
+                            <div class="course-code">[ALGORITHMS] Prof</div>
+                            <div class="course-time">(38/35)</div>
+                        </div>
+                    </div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 12:00 PM -->
+                    <div class="time-slot">12:00 PM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 12:30 PM -->
+                    <div class="time-slot">12:30 PM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 1:00 PM -->
+                    <div class="time-slot">1:00 PM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 1:30 PM -->
+                    <div class="time-slot">1:30 PM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+
+                    <!-- 2:00 PM -->
+                    <div class="time-slot">2:00 PM</div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                    <div class="schedule-cell"></div>
+                </div>
+
+                <div class="system-status">
+                    <div class="status-indicator"></div>
+                    System Status: Online
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Details Modal -->
+    <div id="scheduleDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Schedule Details</h2>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Course:</span>
+                <span class="detail-value" id="detailCourse">CAPSTONE</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Instructor:</span>
+                <span class="detail-value" id="detailInstructor">Prof Cruz</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Lab:</span>
+                <span class="detail-value" id="detailLab">Lab 1811</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Day:</span>
+                <span class="detail-value" id="detailDay">Monday</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Time:</span>
+                <span class="detail-value" id="detailTime">8:00 AM - 9:30 AM</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Enrolled:</span>
+                <span class="detail-value" id="detailEnrolled">30/30</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value" id="detailStatus">Active</span>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="closeModal('scheduleDetailsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample schedule data for different labs
+        const scheduleData = {
+            '1811': {
+                'capstone-mon-8': {
+                    course: 'CAPSTONE',
+                    instructor: 'Prof Cruz',
+                    day: 'Monday',
+                    time: '8:00 AM - 9:30 AM',
+                    enrolled: '30/30',
+                    status: 'Active'
+                },
+                'cybersec-wed-8': {
+                    course: 'CYBERSECURITY',
+                    instructor: 'Prof Green',
+                    day: 'Wednesday',
+                    time: '8:00 AM - 9:30 AM',
+                    enrolled: '27/27',
+                    status: 'Active'
+                },
+                'sci-sat-8': {
+                    course: 'SCIENCE',
+                    instructor: 'Prof White',
+                    day: 'Saturday',
+                    time: '8:00 AM - 10:00 AM',
+                    enrolled: '27/27',
+                    status: 'Active'
+                },
+                'quantitative-thu-10': {
+                    course: 'QUANTITATIVE MODELS',
+                    instructor: 'Prof Johnson',
+                    day: 'Thursday',
+                    time: '10:00 AM - 11:30 AM',
+                    enrolled: '32/32',
+                    status: 'Active'
+                },
+                'algorithms-wed-1130': {
+                    course: 'ALGORITHMS',
+                    instructor: 'Prof Davis',
+                    day: 'Wednesday',
+                    time: '11:30 AM - 1:00 PM',
+                    enrolled: '38/35',
+                    status: 'Overbooked'
+                }
+            },
+            '1812': {
+                // Different schedule for Lab 1812
+            },
+            '1815': {
+                // Different schedule for Lab 1815
+            }
+        };
+
+        function changeLabView() {
+            const selectedLab = document.getElementById('labSelect').value;
+            document.getElementById('currentLab').textContent = `Lab ${selectedLab}`;
+            
+            // Here you would update the schedule grid based on selected lab
+            // For now, we'll just show a message
+            console.log(`Switching to Lab ${selectedLab} schedule`);
+        }
+
+        function openScheduleDetails(scheduleId) {
+            const selectedLab = document.getElementById('labSelect').value;
+            const schedule = scheduleData[selectedLab] && scheduleData[selectedLab][scheduleId];
+            
+            if (schedule) {
+                document.getElementById('detailCourse').textContent = schedule.course;
+                document.getElementById('detailInstructor').textContent = schedule.instructor;
+                document.getElementById('detailLab').textContent = `Lab ${selectedLab}`;
+                document.getElementById('detailDay').textContent = schedule.day;
+                document.getElementById('detailTime').textContent = schedule.time;
+                document.getElementById('detailEnrolled').textContent = schedule.enrolled;
+                document.getElementById('detailStatus').textContent = schedule.status;
+            }
+            
+            showModal('scheduleDetailsModal');
+        }
+
+        function openScheduleManagement() {
+            // Redirect to schedule management page
+            window.location.href = 'schedule-management.html';
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('SADE Schedule View Initialized');
+        });
+    </script>
+</body>
+</html>

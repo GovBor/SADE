@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SADE - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 200px;
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s;
+            gap: 12px;
+        }
+
+        .menu-item:hover {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        .menu-item.active {
+            background: #e5e7eb;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .menu-icon {
+            width: 16px;
+            height: 16px;
+            background: #666;
+            border-radius: 2px;
+        }
+
+        /* Main Content */
+        .content {
+            flex: 1;
+            background: white;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e5e7eb;
+        }
+
+        .user-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        /* Lab Status Indicators */
+        .lab-status {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .lab-indicator {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 120px;
+        }
+
+        .lab-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .lab-dot.green {
+            background: #10b981;
+        }
+
+        .lab-dot.red {
+            background: #ef4444;
+        }
+
+        .lab-dot.orange {
+            background: #f59e0b;
+        }
+
+        .lab-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Left Column */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Today's Summary */
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-highlight {
+            background: #fbbf24;
+            height: 4px;
+            width: 60px;
+            border-radius: 2px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-icon {
+            width: 16px;
+            height: 16px;
+            background: #666;
+            border-radius: 2px;
+        }
+
+        .alert-badge {
+            background: #ef4444;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        /* Real-time Access Log */
+        .access-log {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        .log-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .log-entry {
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #4f46e5;
+            font-weight: 500;
+        }
+
+        .log-alert {
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        .pause-btn {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .pause-btn:hover {
+            background: #bfdbfe;
+        }
+
+        /* Right Column - Action Buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: #4f46e5;
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .action-btn:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Critical Alert Banner */
+        .critical-alert {
+            background: #ef4444;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .alert-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .acknowledge-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .acknowledge-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .lab-status {
+                flex-wrap: wrap;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">SADE System</div>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="menu-item active">
+                    <div class="menu-icon"></div>
+                    Dashboard
+                </a>
+                <a href="schedule-management-main.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Schedules
+                </a>
+                <a href="users-management.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Users
+                </a>
+                <a href="logs.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Logs
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Settings
+                </a>
+                <a href="help.html" class="menu-item">
+                    <div class="menu-icon"></div>
+                    Help
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="header">
+                <h1 class="page-title">SADE Dashboard | Technician</h1>
+                <div class="user-profile">
+                    <img src="/placeholder.svg?height=32&width=32&text=Tech" alt="Tech. Victorio" class="user-avatar">
+                    <span class="user-name">Tech. Victorio</span>
+                    <span>▼</span>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- Lab Status Indicators -->
+                <div class="lab-status">
+                    <div class="lab-indicator">
+                        <div class="lab-dot green"></div>
+                        <div class="lab-name">Lab 1811</div>
+                    </div>
+                    <div class="lab-indicator">
+                        <div class="lab-dot red"></div>
+                        <div class="lab-name">Lab 1815</div>
+                    </div>
+                    <div class="lab-indicator">
+                        <div class="lab-dot orange"></div>
+                        <div class="lab-name">Lab 1812</div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Left Column -->
+                    <div class="left-column">
+                        <!-- Today's Summary -->
+                        <div class="summary-card">
+                            <div class="summary-header">
+                                <div class="summary-highlight"></div>
+                                <div class="summary-title">Today's Summary</div>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <div class="summary-icon"></div>
+                                <span>Active Sessions: <span id="activeSessions">3</span></span>
+                            </div>
+                            
+                            <div class="summary-item">
+                                <div class="summary-icon"></div>
+                                <span>Security Alerts: <span id="securityAlerts">1</span> <span class="alert-badge">NEW</span></span>
+                            </div>
+                            
+                            <div style="margin-top: 15px; color: #666; font-size: 14px;">
+                                <div style="margin-bottom: 5px;">Lab 1811: <span id="lab1811Status">Active</span></div>
+                                <div style="margin-bottom: 5px;">Lab 1812: <span id="lab1812Status">Maintenance</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Access Log -->
+                        <div class="access-log">
+                            <div class="log-title">Real-time Access Log</div>
+                            
+                            <div id="logEntries">
+                                <div class="log-entry">
+                                    <span class="log-time">[14:30:05]</span> Lab1811: Student 2020123456 entered
+                                </div>
+                                
+                                <div class="log-entry">
+                                    <span class="log-time">[14:32:17]</span> Lab1812: Prof. Cruz authenticated
+                                </div>
+                                
+                                <div class="log-entry">
+                                    <span class="log-alert">[14:33:22] ALERT:</span> Door tamper detected - Lab1811
+                                </div>
+                            </div>
+                            
+                            <button class="pause-btn" id="pauseBtn" onclick="toggleLogPause()">Pause/Resume</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Column - Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="overrideDoor()">
+                            🔓<br>Override<br>Door
+                        </button>
+                        
+                        <button class="action-btn" onclick="viewAlerts()">
+                            🔔<br>View Alerts
+                            <div class="notification-badge" id="alertBadge">3</div>
+                        </button>
+                        
+                        <button class="action-btn" onclick="generateReport()">
+                            📊<br>Generate<br>Report
+                        </button>
+                        
+                        <button class="action-btn" onclick="window.location.href='system-health.html'">
+                            💚<br>System<br>Health
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critical Alert Banner -->
+            <div class="critical-alert" id="criticalAlert">
+                <div class="alert-text">
+                    <span>⚠️</span>
+                    <span><strong>CRITICAL ALERT:</strong> Lab 1811 door forced at 14:33</span>
+                </div>
+                <button class="acknowledge-btn" onclick="acknowledgeAlert()">ACKNOWLEDGE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logPaused = false;
+        let logUpdateInterval;
+
+        function overrideDoor() {
+            if (confirm('Override door lock? This will unlock all doors for 30 seconds.')) {
+                const button = event.target;
+                const originalText = button.innerHTML;
+                
+                button.innerHTML = '🔓<br>Overriding...';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                    alert('Door override completed. All doors unlocked for 30 seconds.');
+                    addLogEntry('SYSTEM: Emergency door override activated');
+                }, 2000);
+            }
+        }
+
+        function viewAlerts() {
+            alert('Redirecting to alerts page...\n\nActive Alerts:\n• Door tamper detected - Lab 1811\n• Network latency high - Lab 1812\n• Low battery - Card Reader 3');
+        }
+
+        function generateReport() {
+            const button = event.target;
+            const originalText = button.innerHTML;
+            
+            button.innerHTML = '📊<br>Generating...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                alert('System report generated successfully!\n\nReport includes:\n• Access logs\n• System health\n• Security events\n• Usage statistics');
+            }, 3000);
+        }
+
+        function acknowledgeAlert() {
+            if (confirm('Acknowledge this critical alert?')) {
+                document.getElementById('criticalAlert').style.display = 'none';
+                addLogEntry('SYSTEM: Critical alert acknowledged by Tech. Victorio');
+                
+                // Update security alerts count
+                const alertCount = document.getElementById('securityAlerts');
+                const currentCount = parseInt(alertCount.textContent);
+                alertCount.textContent = Math.max(0, currentCount - 1);
+                
+                // Update alert badge
+                const badge = document.getElementById('alertBadge');
+                const badgeCount = parseInt(badge.textContent);
+                badge.textContent = Math.max(0, badgeCount - 1);
+                
+                alert('Alert acknowledged successfully');
+            }
+        }
+
+        function toggleLogPause() {
+            logPaused = !logPaused;
+            const btn = document.getElementById('pauseBtn');
+            
+            if (logPaused) {
+                btn.textContent = 'Resume';
+                btn.style.background = '#fbbf24';
+                clearInterval(logUpdateInterval);
+            } else {
+                btn.textContent = 'Pause/Resume';
+                btn.style.background = '#dbeafe';
+                startLogUpdates();
+            }
+        }
+
+        function addLogEntry(message) {
+            const logEntries = document.getElementById('logEntries');
+            const now = new Date();
+            const timeStr = now.toTimeString().slice(0, 8);
+            
+            const newEntry = document.createElement('div');
+            newEntry.className = 'log-entry';
+            
+            if (message.includes('ALERT') || message.includes('ERROR')) {
+                newEntry.innerHTML = `<span class="log-alert">[${timeStr}]</span> ${message}`;
+            } else {
+                newEntry.innerHTML = `<span class="log-time">[${timeStr}]</span> ${message}`;
+            }
+            
+            // Add to top
+            logEntries.insertBefore(newEntry, logEntries.firstChild);
+            
+            // Keep only last 10 entries
+            const entries = logEntries.querySelectorAll('.log-entry');
+            if (entries.length > 10) {
+                logEntries.removeChild(entries[entries.length - 1]);
+            }
+        }
+
+        function startLogUpdates() {
+            logUpdateInterval = setInterval(() => {
+                if (!logPaused) {
+                    const events = [
+                        'Lab1811: System heartbeat OK',
+                        'Lab1812: Temperature normal',
+                        'Lab1815: Door sensor check passed',
+                        'SYSTEM: Database backup completed',
+                        'Lab1811: Student 2020987654 entered',
+                        'Lab1812: Faculty access granted',
+                        'SYSTEM: Network connectivity verified'
+                    ];
+                    
+                    if (Math.random() < 0.4) { // 40% chance
+                        const randomEvent = events[Math.floor(Math.random() * events.length)];
+                        addLogEntry(randomEvent);
+                    }
+                }
+            }, 5000);
+        }
+
+        function updateDashboardStats() {
+            // Simulate changing statistics
+            const activeSessions = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('activeSessions').textContent = activeSessions;
+            
+            // Update lab statuses
+            const statuses = ['Active', 'Idle', 'Maintenance', 'Offline'];
+            document.getElementById('lab1811Status').textContent = statuses[Math.floor(Math.random() * 2)]; // Active or Idle
+            document.getElementById('lab1812Status').textContent = statuses[Math.floor(Math.random() * statuses.length)];
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            startLogUpdates();
+            
+            // Update stats every 30 seconds
+            setInterval(updateDashboardStats, 30000);
+            
+            // Initial stats update
+            updateDashboardStats();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (logUpdateInterval) {
+                clearInterval(logUpdateInterval);
+            }
+        });
+    </script>
+</body>
+</html>
